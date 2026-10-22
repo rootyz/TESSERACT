@@ -1,0 +1,640 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#090f1a">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23090f1a'/%3E%3Cpath d='M12 20 32 8 52 20 52 44 32 56 12 44Z M12 20 32 32 52 20 M32 32V56 M22 26 32 20 42 26 42 38 32 44 22 38Z' fill='none' stroke='%239ef0df' stroke-width='2'/%3E%3C/svg%3E">
+<title>TESSERACT — a 4D maze · v2</title>
+<style>
+:root{color-scheme:dark;--bg:#090f1a;--panel:#101b2b;--edge:#293c50;--text:#e8f4fa;--muted:#9bb3c4;--cyan:#77e8ee;--purple:#df9ef8;--gold:#ffd885;--mint:#b4f3d1;--shadow:0 16px 50px #0003;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 8% 0%,#18344360,transparent 48%),radial-gradient(ellipse at 100% 20%,#34204a55,transparent 45%),var(--bg);color:var(--text);min-width:280px;line-height:1.5}button,select,input{font:inherit}button,select{color:inherit;background:#172638;border:1px solid var(--edge);border-radius:10px}button{cursor:pointer;min-height:44px;padding:9px 14px;font-weight:600;touch-action:manipulation;transition:background .15s,border-color .15s}button:hover{background:#21374a;border-color:#5c8499}button:active{transform:translateY(1px)}button:disabled{cursor:default;opacity:.45;transform:none}button:focus-visible,select:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offset:3px}button[aria-pressed=true]{border-color:var(--cyan);background:#173b45;color:#dbfcff}.primary{background:var(--mint);color:#0b2527;border-color:var(--mint)}.primary:hover{background:#d5ffe8;color:#092424}.quiet{background:transparent}.muted{color:var(--muted)}.mono{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-variant-numeric:tabular-nums}.eyebrow{text-transform:uppercase;font-size:11px;font-weight:700;letter-spacing:.18em;color:var(--mint)}h1,h2,h3,p{margin:0}h2{font-size:20px;line-height:1.25}h3{font-size:15px}small{font-size:12px}a{color:var(--cyan)}.app{max-width:1360px;margin:auto;padding:28px 32px 30px;padding-bottom:max(30px,env(safe-area-inset-bottom))}.topbar{display:flex;align-items:center;justify-content:space-between;gap:20px;padding-bottom:24px;border-bottom:1px solid var(--edge)}.brand{display:flex;gap:16px;align-items:center}.brand svg{width:52px;height:52px;flex:none}.brand h1{font-size:26px;letter-spacing:.13em;line-height:1.2;font-weight:750}.brand p{color:var(--muted);font-size:12px;letter-spacing:.07em;margin-top:5px}.top-actions{display:flex;gap:8px}.small-tag{font-size:10px;border:1px solid #486174;color:var(--mint);padding:3px 7px;border-radius:5px;vertical-align:middle;letter-spacing:.05em}.mission{display:flex;justify-content:space-between;gap:24px;align-items:center;padding:24px 0 18px}.mission-title{display:flex;gap:16px;align-items:center}.level-number{width:50px;height:50px;display:grid;place-items:center;border:1px solid #425e6d;border-radius:13px;color:var(--mint);font-size:23px;background:#142833}.mission h2{font-size:24px;margin:3px 0}.mission p{font-size:13px;color:var(--muted);max-width:650px}.level-picker{display:flex;flex-direction:column;gap:5px;min-width:180px}.level-picker label{color:var(--muted);font-size:11px;letter-spacing:.1em;text-transform:uppercase}.level-picker select{padding:10px;max-width:260px;min-height:44px}.stats{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--edge);border-radius:14px;margin-bottom:20px;overflow:hidden;background:#0e1927}.stat{padding:12px 20px;border-right:1px solid var(--edge);display:flex;align-items:baseline;gap:12px}.stat:last-child{border:0}.stat .value{font-size:25px;font-weight:650;line-height:1.2;color:var(--text)}.stat label{font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:var(--muted)}.stat.optimum .value{color:var(--mint)}.stat.phase .value{color:var(--purple)}.workspace{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:20px;align-items:start}.panel{border:1px solid var(--edge);border-radius:18px;background:linear-gradient(140deg,#142234,#0e1927);box-shadow:var(--shadow);min-width:0;overflow:hidden}.panel-head{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:18px 22px;border-bottom:1px solid var(--edge)}.panel-head h3{font-size:14px}.panel-head p{font-size:12px;color:var(--muted);margin-top:3px}.segmented{display:flex;padding:3px;gap:3px;border:1px solid var(--edge);border-radius:10px;background:#0c1624}.segmented button{min-height:34px;padding:5px 12px;font-size:12px;background:transparent;border-color:transparent;border-radius:7px}.segmented button[aria-pressed=true]{background:#294653;color:#e9fbfc}.board-toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;padding:12px 22px}.coordinate{color:var(--cyan);font-size:13px}.switch{display:inline-flex;gap:7px;align-items:center;color:var(--muted);font-size:12px;cursor:pointer}.switch input{accent-color:var(--cyan);width:16px;height:16px}.board-scroll{overflow:auto;overscroll-behavior:contain;padding:0 16px 12px;scrollbar-color:#486271 #101b2b}.focus-stage{display:flex;justify-content:center;align-items:center;min-height:352px;position:relative;background:radial-gradient(ellipse,#1e3c4a40,transparent 68%);border-radius:12px}.maze-svg{display:block;width:100%;height:auto;max-width:440px;min-width:256px;overflow:visible}.focus-stage .maze-svg{max-width:var(--board-width,440px);width:var(--board-width,440px);flex-shrink:0}.board-footer{display:flex;flex-wrap:wrap;gap:14px;padding:12px 22px;color:var(--muted);font-size:11px;border-top:1px solid #22374a}.legend-item{display:inline-flex;align-items:center;gap:6px}.legend-symbol{font-size:16px;font-weight:700;line-height:1}.z{color:var(--cyan)}.w{color:var(--purple)}.goal{color:var(--gold)}.preview-line{padding:10px 22px;background:#0a1420;min-height:47px;font-size:12px;color:var(--muted);border-top:1px solid var(--edge);display:flex;align-items:center;justify-content:space-between;gap:8px}.preview-line button{font-size:11px;padding:4px 8px;min-height:30px;flex:none}.zoom{display:flex;gap:5px}.zoom button{min-height:30px;min-width:32px;padding:2px 6px}.atlas-grid{display:grid;grid-template-columns:repeat(var(--z),minmax(210px,1fr));min-width:calc(var(--z)*226px - 16px);gap:16px;padding:10px 0}.atlas-card{background:#0b1421;border:1px solid var(--edge);border-radius:12px;padding:8px}.atlas-card.active{border-color:var(--cyan);background:#122b36}.atlas-card header{display:flex;align-items:center;justify-content:space-between;padding:4px 7px;font-size:11px;color:var(--muted)}.atlas-card .maze-svg{min-width:0}.controls{grid-column:2;grid-row:1 / span 2;padding:20px;position:sticky;top:16px}.controls h3{margin-bottom:6px}.controls-sub{font-size:12px;color:var(--muted);margin-bottom:15px}.pads{display:grid;grid-template-columns:1fr;gap:14px}.pad-group{border:1px solid var(--edge);border-radius:12px;background:#0b1522;padding:12px}.pad-title{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:10px;font-size:12px}.pad-title span{font-size:11px;color:var(--muted)}.pad{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.pad button{padding:5px 3px;min-height:44px;font-size:13px}.pad-center{display:grid;place-items:center;color:#7a95a9;font-size:11px}.pad button small{font-size:9px;display:block;color:var(--muted);line-height:1.1}.pad .placeholder{visibility:hidden}.phase-button{width:100%;margin:14px 0 8px;border-color:#735386;color:#f0c1ff;background:#281f38;font-size:13px}.phase-button[aria-pressed=true]{background:#553168;border-color:var(--purple);color:#fff}.utility{display:grid;grid-template-columns:1fr 1fr;gap:8px}.utility button{font-size:12px}.feedback{margin-top:14px;font-size:12px;line-height:1.55;color:var(--mint);min-height:38px}.destination{margin-top:14px;padding-top:14px;border-top:1px solid var(--edge);font-size:12px;color:var(--muted)}.destination strong{display:block;margin-top:3px;font-weight:500;color:var(--gold)}.navigator{grid-column:1;padding:18px 22px}.nav-heading{display:flex;justify-content:space-between;gap:10px;margin-bottom:12px}.nav-heading p{font-size:12px;color:var(--muted)}.slice-map{display:grid;grid-template-columns:repeat(var(--z),minmax(0,1fr));gap:8px}.slice-button{display:flex;align-items:center;justify-content:space-between;gap:4px;padding:8px 10px;text-align:left;font-size:11px;min-height:46px;background:#0b1624}.slice-button .slice-status{font-size:10px;color:var(--muted)}.slice-button.current{border-color:var(--cyan)}.slice-button.selected{background:#25444d}.slice-button.goal-slice .slice-status{color:var(--gold)}.nav-note{font-size:11px;color:var(--muted);margin-top:10px}.bottomline{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:18px 2px;color:#829cae;font-size:11px}.session-note{color:var(--mint)}dialog{background:#101d2e;color:var(--text);border:1px solid #476176;border-radius:20px;width:min(680px,calc(100% - 28px));max-height:calc(100dvh - 32px);padding:0;box-shadow:0 25px 120px #0009}dialog::backdrop{background:#040914d9;backdrop-filter:blur(5px)}.dialog-inner{padding:28px}.dialog-head{display:flex;justify-content:space-between;gap:12px;align-items:start;margin-bottom:20px}.dialog-head button{min-height:34px;padding:5px 10px}.dialog-inner p{color:#b5cad8;font-size:14px;margin:10px 0}.help-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:18px 0}.help-card{padding:14px;border-radius:12px;border:1px solid var(--edge);background:#0b1623}.help-card h3{color:var(--mint);font-size:13px}.help-card p{font-size:12px;margin:6px 0 0}.help-table{border-collapse:collapse;width:100%;font-size:13px}.help-table td{padding:9px 0;border-bottom:1px solid var(--edge)}.help-table td:first-child{color:var(--cyan);width:40%}.dialog-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}.win-emblem{font-size:40px;color:var(--gold);line-height:1.2;margin-bottom:15px}.win-metrics{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:22px 0}.win-metrics div{border:1px solid var(--edge);border-radius:12px;padding:14px}.win-metrics strong{font-size:26px;display:block;color:var(--mint)}.win-metrics span{font-size:12px;color:var(--muted)}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}[hidden]{display:none!important}.player-pulse{animation:pulse 2.8s ease-in-out infinite;transform-box:fill-box;transform-origin:center}@keyframes pulse{50%{opacity:.55}}body.high-contrast{--edge:#6b8da4;--muted:#c1d4e0}body.high-contrast .maze-wall{stroke:#e5faff;stroke-width:3}body.high-contrast .region-fill{fill:#225666}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}body.reduced-motion *,body.reduced-motion *::before,body.reduced-motion *::after{animation:none!important;transition:none!important}
+@media(max-width:1000px){.app{padding:20px}.workspace{grid-template-columns:minmax(0,1fr) 270px}.controls{padding:16px}.stat{padding:12px;gap:8px}.stat label{font-size:10px}.mission p{max-width:480px}}
+@media(max-width:760px){.app{padding:16px 12px}.topbar{padding-bottom:15px;gap:8px}.brand{gap:8px}.brand svg{width:34px;height:34px}.brand h1{font-size:19px;letter-spacing:.09em}.brand p{font-size:9px;letter-spacing:.02em}.top-actions{gap:5px}.top-actions button{font-size:11px;padding:7px 9px;min-height:38px}.top-actions .learn-label{display:none}.small-tag{display:none}.mission{padding:16px 0;gap:12px;align-items:start}.mission-title{gap:10px}.level-number{width:36px;height:36px;font-size:18px;flex:none;border-radius:9px}.mission h2{font-size:18px}.mission p{font-size:12px}.mission .eyebrow{font-size:9px}.level-picker{min-width:0;max-width:122px;flex:none}.level-picker select{max-width:122px;width:122px;font-size:11px;padding:7px}.level-picker label{font-size:9px}.stats{margin-bottom:12px}.stat{padding:9px 5px;display:flex;flex-direction:column;align-items:center;gap:3px}.stat .value{font-size:20px}.stat label{font-size:9px;letter-spacing:.03em}.workspace{display:flex;flex-direction:column;gap:12px}.board-panel{width:100%}.panel-head{padding:12px}.panel-head h3{font-size:13px}.panel-head p{font-size:11px}.board-toolbar{padding:8px 12px;gap:6px}.coordinate{font-size:12px}.switch{font-size:11px}.focus-stage{min-height:272px}.focus-stage .maze-svg{max-width:var(--board-width,340px);width:var(--board-width,340px);min-width:230px}.board-scroll{padding:0 8px 8px}.board-footer{padding:9px 12px;gap:9px;font-size:10px}.preview-line{padding:8px 12px;font-size:11px;min-height:44px}.controls{position:static;width:100%;padding:12px;order:2}.controls-header,.controls-sub{display:none}.pads{grid-template-columns:1fr 1fr;gap:10px}.pad-group{padding:8px}.pad-title{margin-bottom:6px}.pad{gap:4px}.pad button{min-height:42px;font-size:12px}.pad button small{font-size:9px}.phase-button{margin:10px 0 0;min-height:40px;width:calc(50% - 5px);float:left;font-size:11px}.utility{padding-top:10px;margin-left:calc(50% + 5px);gap:5px}.utility button{min-height:40px;padding:7px 5px;font-size:11px}.feedback{clear:both;margin-top:10px;min-height:18px;font-size:11px}.destination{margin-top:10px;padding-top:8px;font-size:11px}.destination strong{display:inline;margin-left:6px}.navigator{width:100%;padding:12px;order:3}.slice-button{padding:7px 6px;font-size:10px;flex-direction:column;align-items:start;min-height:46px}.nav-heading h3{font-size:13px}.nav-heading p{font-size:11px}.bottomline{font-size:10px;padding:14px 2px}.dialog-inner{padding:20px}.help-grid{grid-template-columns:1fr}.help-table{font-size:12px}}
+@media(max-width:360px){.brand p{display:none}.brand h1{font-size:16px}.top-actions button{font-size:10px}.mission{flex-wrap:wrap}.level-picker{max-width:none;flex-direction:row;align-items:center}.level-picker select{max-width:230px;width:230px}.mission-title{width:100%}.coordinate{font-size:10px}.panel-head{gap:5px}.segmented button{padding:5px 8px}.slice-map{gap:4px}}
+.intro-banner{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:18px 0 0;padding:14px 18px;background:#19323a;border:1px solid #41636a;border-radius:12px}.intro-banner strong{font-size:13px}.intro-banner p{font-size:12px;color:#b5d1d5;margin-top:2px}.intro-banner .intro-actions{display:flex;gap:8px;flex:none}.intro-banner button{font-size:12px;min-height:38px}.tutorial-actions{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0 0;color:var(--mint);font-size:12px}.tutorial-actions button{font-size:12px;min-height:38px}@media(max-width:760px){.intro-banner{gap:10px;margin-top:12px;padding:12px;align-items:start;flex-wrap:wrap}.intro-banner .intro-actions{width:100%}.intro-banner button{flex:1}.tutorial-actions{font-size:11px}}
+.focus-stage{width:max-content;min-width:100%}@media(max-width:360px){.level-picker{width:100%}.level-picker select{flex:1;width:0;min-width:0;max-width:none}}
+</style>
+</head>
+<body>
+<div class="app">
+ <header class="topbar">
+  <div class="brand"><svg viewBox="0 0 64 64" aria-hidden="true"><g fill="none" stroke="#9ef0df" stroke-width="1.5"><path d="M8 18 32 5 56 18 56 46 32 59 8 46Z M8 18 32 32 56 18 M32 32V59"/><path d="M21 25 32 19 43 25 43 39 32 45 21 39Z M21 25 32 32 43 25 M32 32V45 M8 18 21 25 M56 18 43 25 M8 46 21 39 M56 46 43 39 M32 5V19" opacity=".6"/></g></svg><div><h1>TESSERACT <span class="small-tag">v2</span></h1><p>A maze beyond three dimensions</p></div></div>
+  <div class="top-actions"><button id="learn-button" class="quiet">Learn<span class="learn-label"> to play</span></button><button id="help-button" class="quiet" aria-haspopup="dialog">Help</button></div>
+ </header>
+ <aside id="intro-banner" class="intro-banner" aria-label="Optional tutorial"><div><strong>New to four dimensions?</strong><p>Five short, optional lessons introduce the maze one axis at a time.</p></div><div class="intro-actions"><button id="try-tutorial" class="primary">Try tutorial</button><button id="skip-intro" class="quiet">Skip</button></div></aside>
+ <div id="tutorial-actions" class="tutorial-actions" hidden><span>Optional tutorial · leave any time</span><button id="skip-tutorial">Skip tutorial →</button></div>
+ <section class="mission" aria-labelledby="level-name">
+  <div class="mission-title"><div id="level-number" class="level-number mono">01</div><div><div id="mode-label" class="eyebrow">Campaign / six dimensions to solve</div><h2 id="level-name">Loading the maze</h2><p id="level-description">Find the gold star. Every step changes one axis.</p></div></div>
+  <div class="level-picker"><label for="level-select">Choose a level</label><select id="level-select" aria-label="Choose a campaign level or lesson"></select></div>
+ </section>
+ <section class="stats" aria-label="Run statistics">
+  <div class="stat"><span id="moves" class="value mono">0</span><label>Moves</label></div>
+  <div class="stat optimum"><span id="optimum" class="value mono">—</span><label>Optimum</label></div>
+  <div class="stat"><span id="normal-par" class="value mono">—</span><label>Normal par</label></div>
+  <div class="stat phase"><span id="charges" class="value mono">0</span><label>Phase left</label></div>
+ </section>
+ <main class="workspace">
+  <section class="panel board-panel" aria-label="Maze board">
+   <div class="panel-head"><div><h3 id="board-title">Your current slice</h3><p id="slice-caption">Z 0 · W 0</p></div><div class="segmented" aria-label="Board view"><button id="focus-view" aria-pressed="true">Focus</button><button id="atlas-view" aria-pressed="false">Atlas</button></div></div>
+   <div class="board-toolbar"><span id="coordinates" class="coordinate mono"></span><label class="switch"><input type="checkbox" id="region-toggle" checked>Connected region</label><div class="zoom" aria-label="Board zoom"><button id="zoom-out" aria-label="Zoom board out">−</button><button id="zoom-in" aria-label="Zoom board in">+</button></div></div>
+   <div class="board-scroll" id="board-scroll"><div class="focus-stage" id="focus-stage"></div><div class="atlas-grid" id="atlas-grid" hidden></div></div>
+   <div class="preview-line"><span id="preview-text">The highlighted region connects without changing slices.</span><button id="return-player" hidden>Back to you</button></div>
+   <div class="board-footer"><span class="legend-item"><b class="legend-symbol z">›</b>Z doorway</span><span class="legend-item"><b class="legend-symbol w">◆</b>W doorway</span><span class="legend-item"><b class="legend-symbol goal">★</b>Goal</span><span class="legend-item">◌ Projected position</span></div>
+  </section>
+  <section class="panel controls" aria-label="Movement and actions">
+   <h3 class="controls-header">One step. One axis.</h3><p class="controls-sub">Use the pads or your keyboard.</p>
+   <div class="pads">
+    <div class="pad-group"><div class="pad-title"><strong>X / Y</strong><span>Inside a slice</span></div><div class="pad">
+     <span class="placeholder"></span><button data-axis="1" data-sign="-1" aria-label="Move Y minus, up inside this slice">↑ <small>W · Y−</small></button><span class="placeholder"></span>
+     <button data-axis="0" data-sign="-1" aria-label="Move X minus, left inside this slice">← <small>A · X−</small></button><span class="pad-center">X / Y</span><button data-axis="0" data-sign="1" aria-label="Move X plus, right inside this slice">→ <small>D · X+</small></button>
+     <span class="placeholder"></span><button data-axis="1" data-sign="1" aria-label="Move Y plus, down inside this slice">↓ <small>S · Y+</small></button><span class="placeholder"></span>
+    </div></div>
+    <div class="pad-group"><div class="pad-title"><strong>Z / W</strong><span>Between slices</span></div><div class="pad">
+     <span class="placeholder"></span><button class="w" data-axis="3" data-sign="-1" aria-label="Step W minus, previous slice row">↑ <small>↑ · W−</small></button><span class="placeholder"></span>
+     <button class="z" data-axis="2" data-sign="-1" aria-label="Step Z minus, previous slice column">← <small>← · Z−</small></button><span class="pad-center">Z / W</span><button class="z" data-axis="2" data-sign="1" aria-label="Step Z plus, next slice column">→ <small>→ · Z+</small></button>
+     <span class="placeholder"></span><button class="w" data-axis="3" data-sign="1" aria-label="Step W plus, next slice row">↓ <small>↓ · W+</small></button><span class="placeholder"></span>
+    </div></div>
+   </div>
+   <button id="phase-button" class="phase-button" aria-pressed="false">◇ Arm phase <span class="mono">[Space]</span></button>
+   <div class="utility"><button id="undo-button">↶ Undo <span class="mono">[U]</span></button><button id="restart-button">Restart <span class="mono">[R]</span></button></div>
+   <p id="feedback" class="feedback" role="status" aria-live="polite" aria-atomic="true">Find the gold star.</p>
+   <div class="destination">Goal address <strong id="goal-address" class="mono"></strong><span id="best-score"></span></div>
+   <div id="accessible-state" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+  </section>
+  <section class="panel navigator" aria-label="Slice navigator">
+   <div class="nav-heading"><h3>The slice atlas</h3><p>Z → columns · W ↓ rows</p></div><div id="slice-map" class="slice-map"></div><p class="nav-note">Select a slice to inspect it. Inspecting never moves you. W wraps from the last row to the first.</p>
+  </section>
+ </main>
+ <footer class="bottomline"><span id="save-note" class="session-note">Progress saves on this device.</span><span>WASD · Arrow keys · Shift + move to phase · U to undo</span></footer>
+</div>
+<dialog id="help-dialog" aria-labelledby="help-title"><div class="dialog-inner">
+ <div class="dialog-head"><div><div class="eyebrow">Field guide</div><h2 id="help-title">Think in connections.</h2></div><button data-close="help-dialog" aria-label="Close help">✕</button></div>
+ <p>You are the bright orb. Reach the gold star using as few moves as you can. Every move takes one step along one axis.</p>
+ <div class="help-grid"><div class="help-card"><h3>Inside a slice: X & Y</h3><p>Walls block movement. The tinted region shows cells connected to the orb without leaving this slice. One slice can contain several separate regions.</p></div><div class="help-card"><h3>Between slices: Z & W</h3><p>Cyan chevrons are Z doors. Purple diamonds are W doors. Door position matches the direction. X and Y stay the same when you cross.</p></div><div class="help-card"><h3>W wraps around</h3><p>Up from row 0 reaches the last row. Down from the last row reaches row 0. X, Y and Z have hard boundaries. All campaign levels use three W rows.</p></div><div class="help-card"><h3>Phase, introduced in Level 4</h3><p>A charge lets you cross one closed wall or missing door. Open moves never spend a charge. You cannot phase beyond X, Y or Z boundaries.</p></div></div>
+ <table class="help-table"><tbody><tr><td>W A S D</td><td>Move inside the slice: Y−, X−, Y+, X+</td></tr><tr><td>← / →</td><td>Step Z− / Z+</td></tr><tr><td>↑ / ↓</td><td>Step W− / W+</td></tr><tr><td>Shift + move</td><td>Phase through a closed connection</td></tr><tr><td>Space / phase button</td><td>Arm phase for the next successful move</td></tr><tr><td>U / Undo</td><td>Undo a move and restore any charge it spent</td></tr><tr><td>R / Restart</td><td>Restart the identical maze</td></tr><tr><td>Enter after winning</td><td>Continue to the next level or lesson</td></tr></tbody></table>
+ <p><strong>Optimum</strong> is the shortest route with this level's starting phase allowance. <strong>Normal par</strong> is the shortest route without phase. “Optimal” means you matched the optimum; “Par beaten” means you beat the normal benchmark.</p>
+ <p>Blocked attempts cost no moves and keep an armed phase ready. A successful move disarms it, even if the connection was already open. Undo, restart, and switching levels clear it.</p>
+ <p>Use Focus for a large map and Atlas to compare slices. Select a slice to inspect its projected landing region; use Back to you to return. Preview Z/W destinations by focusing or hovering a direction button. Every accepted move returns the view to your position.</p>
+ <label class="switch"><input id="motion-toggle" type="checkbox">Reduce motion</label><br><label class="switch"><input id="contrast-toggle" type="checkbox">Higher contrast</label>
+ <p id="storage-help">Progress and personal bests save in this browser. Moving the HTML file or opening another browser may start a separate save.</p>
+ <div class="dialog-actions"><button id="help-learn" class="primary">Try the five lessons</button><button data-close="help-dialog">Back to the maze</button></div>
+</div></dialog>
+<dialog id="win-dialog" aria-labelledby="win-title"><div class="dialog-inner">
+ <div class="dialog-head"><div class="eyebrow" id="win-kicker">Connection established</div><button data-close="win-dialog" aria-label="Close result and inspect the maze">✕</button></div>
+ <div class="win-emblem" aria-hidden="true">✧</div><h2 id="win-title">Dimension solved.</h2><p id="win-message"></p>
+ <div class="win-metrics"><div><strong id="win-moves" class="mono"></strong><span>Your moves</span></div><div><strong id="win-optimum" class="mono"></strong><span>Optimum</span></div></div>
+ <div class="dialog-actions"><button id="next-button" class="primary">Next level →</button><button id="replay-button">Replay this maze</button><button id="win-undo">Undo last move</button></div>
+</div></dialog>
+<noscript><p style="padding:24px">TESSERACT needs JavaScript to run. Enable JavaScript, then reopen this file.</p></noscript>
+<script>
+/* TESSERACT 2 — deterministic, UI-independent maze and movement rules. */
+(function (root) {
+  'use strict';
+  const VERSION = '2.0.0';
+  const axes = [0, 1, 2, 3];
+  const key = position => position.join(',');
+  const same = (a, b) => a.every((value, i) => value === b[i]);
+  const clone = position => position.slice();
+  const campaign = [
+    { id: 'campaign-1', name: 'First contact', dimensions: [3, 3, 2, 3], charges: 0, seed: 14, loops: .15, description: 'Find a route through X, Y, Z and W. Follow the open doors.' },
+    { id: 'campaign-2', name: 'New perspective', dimensions: [4, 3, 2, 3], charges: 0, seed: 14, loops: .12, description: 'A slice can have several separate regions. Look for a route through another slice.' },
+    { id: 'campaign-3', name: 'Connected worlds', dimensions: [4, 4, 3, 3], charges: 0, seed: 24, loops: .12, description: 'Plan across Z columns and the three W layers.' },
+    { id: 'campaign-4', name: 'First breach', dimensions: [4, 4, 3, 3], charges: 1, seed: 76, loops: .01, description: 'One phase charge opens a shortcut. Its value depends on where you spend it.' },
+    { id: 'campaign-5', name: 'Hidden passage', dimensions: [5, 4, 3, 3], charges: 1, seed: 29, loops: .01, description: 'Choose your shortcut carefully in a larger network.' },
+    { id: 'campaign-6', name: 'Event horizon', dimensions: [5, 5, 4, 3], charges: 2, seed: 838, loops: 0, description: 'Use two phase charges to solve the final maze efficiently.' }
+  ];
+  const action = (axis, sign, phase = false) => ({ axis, sign, phase });
+  const tutorials = [
+    { id: 'tutorial-1', name: 'Move inside a slice', dimensions: [3, 2, 1, 1], charges: 0,
+      description: 'A/D move along X; W/S move along Y. Take two steps right, then one step down.',
+      start: [0, 0, 0, 0], goal: [2, 1, 0, 0],
+      edges: [[[0,0,0,0],0],[[1,0,0,0],0],[[2,0,0,0],1],[[1,1,0,0],0],[[0,1,0,0],0]],
+      steps: [action(0,1),action(0,1),action(1,1)] },
+    { id: 'tutorial-2', name: 'Step through Z', dimensions: [2, 1, 2, 1], charges: 0,
+      description: 'Move right to the cyan door, then press Right Arrow (Z+). X and Y stay the same.',
+      start: [0, 0, 0, 0], goal: [1, 0, 1, 0],
+      edges: [[[0,0,0,0],0],[[1,0,0,0],2],[[0,0,1,0],0]],
+      steps: [action(0,1),action(2,1)] },
+    { id: 'tutorial-3', name: 'Step through W', dimensions: [2, 1, 1, 3], charges: 0,
+      description: 'Move right to the purple door, then press Down Arrow (W+). W is the layer number.',
+      start: [0, 0, 0, 0], goal: [1, 0, 0, 1],
+      edges: [[[0,0,0,0],0],[[1,0,0,0],3],[[0,0,0,1],0],[[0,0,0,1],3],[[0,0,0,2],0]],
+      steps: [action(0,1),action(3,1)] },
+    { id: 'tutorial-4', name: 'Wrap around W', dimensions: [2, 1, 1, 3], charges: 0,
+      description: 'You start at W=2. Press Down Arrow (W+) to wrap directly to W=0 through the open door.',
+      start: [1, 0, 0, 2], goal: [1, 0, 0, 0],
+      edges: [[[0,0,0,0],0],[[0,0,0,0],3],[[0,0,0,1],0],[[0,0,0,1],3],[[0,0,0,2],0],[[1,0,0,2],3]],
+      steps: [action(3,1)] },
+    { id: 'tutorial-5', name: 'Phase through a wall', dimensions: [3, 2, 1, 1], charges: 1,
+      description: 'Hold Shift and press D, or arm Phase then press X+. Cross the wall, then press D again. Phasing costs a charge only when you cross a closed wall.',
+      start: [0, 0, 0, 0], goal: [2, 0, 0, 0],
+      edges: [[[0,0,0,0],1],[[0,1,0,0],0],[[1,1,0,0],0],[[2,0,0,0],1],[[1,0,0,0],0]],
+      steps: [action(0,1,true),action(0,1)] }
+  ];
+
+  function rng(seed) {
+    let a = seed >>> 0;
+    return () => {
+      a = (a + 0x6D2B79F5) | 0;
+      let t = Math.imul(a ^ a >>> 15, 1 | a);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+
+  function validPosition(maze, position) {
+    return Array.isArray(position) && position.length === 4 && position.every((v, i) => Number.isInteger(v) && v >= 0 && v < maze.dimensions[i]);
+  }
+
+  function neighbor(maze, position, axis, sign) {
+    if (!Number.isInteger(axis) || axis < 0 || axis > 3 || (sign !== 1 && sign !== -1) || !validPosition(maze, position)) return null;
+    if (maze.dimensions[axis] === 1) return null;
+    const next = clone(position);
+    next[axis] += sign;
+    let wrapped = false;
+    if (axis === 3) {
+      wrapped = next[3] < 0 || next[3] >= maze.dimensions[3];
+      next[3] = (next[3] + maze.dimensions[3]) % maze.dimensions[3];
+    } else if (next[axis] < 0 || next[axis] >= maze.dimensions[axis]) return null;
+    const edge = key(sign > 0 ? position : next) + '|' + axis;
+    return { position: next, edge, open: maze.open.has(edge), wrapped };
+  }
+
+  function positions(maze) {
+    const out = [];
+    const [X, Y, Z, W] = maze.dimensions;
+    for (let w = 0; w < W; w++) for (let z = 0; z < Z; z++) for (let y = 0; y < Y; y++) for (let x = 0; x < X; x++) out.push([x, y, z, w]);
+    return out;
+  }
+
+  // Breadth-first search uses charges as part of the state. A cheaper route to a
+  // cell with fewer remaining charges cannot replace a costlier, useful state.
+  function search(maze, options = {}) {
+    const start = options.start || maze.start;
+    const charges = options.charges === undefined ? maze.config.charges : options.charges;
+    const allowedAxes = options.allowedAxes === undefined ? axes : options.allowedAxes;
+    if (!validPosition(maze, start) || !Number.isInteger(charges) || charges < 0 || !Array.isArray(allowedAxes) || allowedAxes.some(a => !axes.includes(a))) throw new Error('Invalid search options');
+    const queue = [{ position: clone(start), charges, distance: 0, parent: -1, action: null }];
+    const seen = new Set([key(start) + '|' + charges]);
+    const first = new Map([[key(start), 0]]);
+    for (let i = 0; i < queue.length; i++) {
+      const current = queue[i];
+      for (const axis of allowedAxes) for (const sign of [1, -1]) {
+        const n = neighbor(maze, current.position, axis, sign);
+        if (!n || (!n.open && !current.charges)) continue;
+        const remaining = current.charges - (n.open ? 0 : 1);
+        const stateKey = key(n.position) + '|' + remaining;
+        if (seen.has(stateKey)) continue;
+        seen.add(stateKey);
+        const index = queue.length;
+        queue.push({ position: n.position, charges: remaining, distance: current.distance + 1, parent: i, action: action(axis, sign, !n.open) });
+        if (!first.has(key(n.position))) first.set(key(n.position), index);
+      }
+    }
+    return { queue, first };
+  }
+
+  function pathFrom(searchResult, index) {
+    if (index === undefined) return null;
+    const end = searchResult.queue[index];
+    const actions = [], route = [];
+    for (let i = index; i >= 0; i = searchResult.queue[i].parent) {
+      const step = searchResult.queue[i];
+      route.push(clone(step.position));
+      if (step.action) actions.push({ ...step.action });
+    }
+    actions.reverse(); route.reverse();
+    return { distance: end.distance, actions, positions: route, chargesRemaining: end.charges };
+  }
+
+  function solve(maze, options = {}) {
+    const goal = options.goal || maze.goal;
+    if (!validPosition(maze, goal)) throw new Error('Invalid goal');
+    const result = search(maze, options);
+    return pathFrom(result, result.first.get(key(goal)));
+  }
+
+  function create(configOrIndex = 0) {
+    const source = typeof configOrIndex === 'number' ? campaign[configOrIndex] : typeof configOrIndex === 'string' ? [...campaign, ...tutorials].find(c => c.id === configOrIndex) : configOrIndex;
+    if (!source || !Array.isArray(source.dimensions) || source.dimensions.length !== 4 || source.dimensions.some(v => !Number.isInteger(v) || v < 1) || !Number.isInteger(source.charges) || source.charges < 0) throw new Error('Invalid maze configuration');
+    const config = { ...source, dimensions: source.dimensions.slice() };
+    const maze = { config, dimensions: config.dimensions.slice(), start: clone(config.start || [0,0,0,0]), goal: null, open: new Set() };
+    if (!validPosition(maze, maze.start)) throw new Error('Invalid start');
+    if (config.edges) {
+      for (const [p, axis] of config.edges) {
+        const n = neighbor(maze, p, axis, 1);
+        if (!n) throw new Error('Invalid authored edge');
+        maze.open.add(n.edge);
+      }
+    } else {
+      const random = rng(config.seed), seen = new Set([key(maze.start)]), stack = [maze.start];
+      while (stack.length) {
+        const p = stack[stack.length - 1], choices = [];
+        for (const a of axes) for (const s of [1, -1]) {
+          const n = neighbor(maze, p, a, s);
+          if (n && !seen.has(key(n.position))) choices.push(n);
+        }
+        if (!choices.length) { stack.pop(); continue; }
+        const next = choices[Math.floor(random() * choices.length)];
+        maze.open.add(next.edge); seen.add(key(next.position)); stack.push(next.position);
+      }
+      const count = maze.dimensions.reduce((a, b) => a * b, 1);
+      const extraEdges = Math.floor(count * (config.loops === undefined ? .06 : config.loops));
+      for (let i = 0; i < extraEdges; i++) {
+        const p = maze.dimensions.map(d => Math.floor(random() * d));
+        const n = neighbor(maze, p, Math.floor(random() * 4), random() < .5 ? 1 : -1);
+        if (n) maze.open.add(n.edge);
+      }
+    }
+    const normal = search(maze, { charges: 0 }), phased = config.charges ? search(maze) : normal;
+    if (config.goal) {
+      if (!validPosition(maze, config.goal)) throw new Error('Invalid goal');
+      maze.goal = clone(config.goal);
+    } else {
+      // Both higher axes are required because neither goal coordinate matches
+      // the start. Among these cells, choose maximum exact phase-aware distance;
+      // normal distance provides a deterministic tie-break.
+      let best = -1, normalBest = -1;
+      for (const p of positions(maze)) {
+        if ((maze.dimensions[2] > 1 && p[2] === maze.start[2]) || (maze.dimensions[3] > 1 && p[3] === maze.start[3])) continue;
+        const pi = phased.first.get(key(p)), ni = normal.first.get(key(p));
+        if (pi === undefined || ni === undefined) continue;
+        const distance = phased.queue[pi].distance, normalDistance = normal.queue[ni].distance;
+        if (distance > best || (distance === best && normalDistance > normalBest)) {
+          maze.goal = clone(p); best = distance; normalBest = normalDistance;
+        }
+      }
+      if (!maze.goal) maze.goal = clone(maze.start);
+    }
+    maze.solution = pathFrom(phased, phased.first.get(key(maze.goal)));
+    maze.normalSolution = pathFrom(normal, normal.first.get(key(maze.goal)));
+    if (!maze.solution || !maze.normalSolution) throw new Error('Goal is unreachable without phase');
+    maze.optimum = maze.solution.distance;
+    maze.normalPar = maze.normalSolution.distance;
+    return maze;
+  }
+
+  function region(maze, position) {
+    if (!validPosition(maze, position)) return new Set();
+    const cells = new Set([key(position)]), queue = [position];
+    for (let i = 0; i < queue.length; i++) for (const a of [0,1]) for (const s of [1,-1]) {
+      const n = neighbor(maze, queue[i], a, s);
+      if (n && n.open && !cells.has(key(n.position))) { cells.add(key(n.position)); queue.push(n.position); }
+    }
+    return cells;
+  }
+
+  function createRun(maze) {
+    return { maze, position: clone(maze.start), charges: maze.config.charges, moves: 0, won: same(maze.start, maze.goal), history: [], trail: [clone(maze.start)] };
+  }
+
+  function move(run, axis, sign, usePhase = false) {
+    const from = clone(run.position);
+    const failure = reason => ({ ok: false, reason, phased: false, from, to: clone(from) });
+    if (run.won) return failure('finished');
+    const n = neighbor(run.maze, from, axis, sign);
+    if (!n) return failure('boundary');
+    if (!n.open && !usePhase) return failure('wall');
+    if (!n.open && run.charges <= 0) return failure('no-charge');
+    const phased = !n.open;
+    if (phased) run.charges--;
+    run.position = n.position;
+    run.moves++;
+    run.history.push(action(axis, sign, phased));
+    run.trail.push(clone(run.position));
+    run.won = same(run.position, run.maze.goal);
+    return { ok: true, reason: null, phased, from, to: clone(run.position), wrapped: n.wrapped };
+  }
+
+  function undo(run) {
+    if (!run.history.length) return false;
+    const previous = run.history.pop();
+    if (previous.phase) run.charges++;
+    run.moves--;
+    run.trail.pop();
+    run.position = clone(run.trail[run.trail.length - 1]);
+    run.won = same(run.position, run.maze.goal);
+    return true;
+  }
+
+  function restart(run) {
+    Object.assign(run, createRun(run.maze));
+    return run;
+  }
+
+  const engine = { VERSION, campaign, tutorials, create, neighbor, solve, region, createRun, move, undo, restart, positions, key };
+  root.TesseractEngine = engine;
+  if (typeof module !== 'undefined' && module.exports) module.exports = engine;
+})(typeof globalThis !== 'undefined' ? globalThis : this);
+
+</script>
+<script>
+/* TESSERACT 2 — local-first interface. No network services or external assets. */
+(() => {
+ 'use strict';
+ const E = globalThis.TesseractEngine;
+ const $ = id => document.getElementById(id);
+ const STORAGE = 'tesseract-v2-save';
+ const AXES = ['X','Y','Z','W'];
+ const KEYMAP = {a:[0,-1],d:[0,1],w:[1,-1],s:[1,1],arrowleft:[2,-1],arrowright:[2,1],arrowup:[3,-1],arrowdown:[3,1]};
+ const cache = new Map();
+ let kind = 'campaign', index = 0, run, armed = false, selectedSlice, hoverPreview = null;
+ let storageOK = true, storageMessage = '', best = {}, lastFeedback = '', campaignResume = null;
+ let settings = {view:'focus',region:true,motion:matchMedia('(prefers-reduced-motion: reduce)').matches,contrast:false,zoom:1,introDismissed:false};
+ const same = (a,b) => a.every((v,i)=>v===b[i]);
+ const addr = p => p.map((n,i)=>`${AXES[i]} ${n}`).join(' · ');
+ const configList = () => kind === 'tutorial' ? E.tutorials : E.campaign;
+ function mazeFor(config) { if (!cache.has(config.id)) cache.set(config.id,E.create(config)); return cache.get(config.id); }
+ function closeDialogs() { document.querySelectorAll('dialog[open]').forEach(d=>d.close()); }
+ function persist() {
+  if(!storageOK)return;
+  try {
+   if(run.history.length>10000)throw new Error('Save capacity reached');
+   const campaignRecord=kind==='campaign'?{index,actions:run.history}:campaignResume;
+   localStorage.setItem(STORAGE,JSON.stringify({version:2,engineVersion:E.VERSION,active:{kind,index,actions:run.history},campaignResume:campaignRecord,best,settings}));
+  } catch (_) {storageOK=false;storageMessage='Saving is unavailable. You can keep playing in this session.';}
+  $('save-note').textContent=storageOK?'Progress saves on this device.':storageMessage;
+ }
+ function restore() {
+  try {
+   const raw=localStorage.getItem(STORAGE);
+   if(!raw)return false;
+   const save=JSON.parse(raw);
+   if(save.version!==2||save.engineVersion!==E.VERSION||!save.active)throw new Error('Old save');
+   const s=save.settings||{};
+   settings={view:s.view==='atlas'?'atlas':'focus',region:s.region!==false,motion:typeof s.motion==='boolean'?s.motion:settings.motion,contrast:s.contrast===true,zoom:[.75,1,1.25,1.5,2].includes(s.zoom)?s.zoom:1,introDismissed:s.introDismissed===true};
+   best={};
+   for(const c of [...E.campaign,...E.tutorials]){
+    const value=save.best&&save.best[c.id];
+    if(Number.isInteger(value)&&value>=mazeFor(c).optimum&&value<=10000)best[c.id]=value;
+   }
+   const a=save.active;
+   if(!['campaign','tutorial'].includes(a.kind)||!Number.isInteger(a.index)||a.index<0||a.index>=(a.kind==='tutorial'?E.tutorials:E.campaign).length||!Array.isArray(a.actions)||a.actions.length>10000)throw new Error('Invalid save');
+   const restored=E.createRun(mazeFor((a.kind==='tutorial'?E.tutorials:E.campaign)[a.index]));
+   for(const step of a.actions){
+    if(!step||!Number.isInteger(step.axis)||![1,-1].includes(step.sign)||typeof step.phase!=='boolean')throw new Error('Invalid action');
+    const result=E.move(restored,step.axis,step.sign,step.phase);
+    if(!result.ok||result.phased!==step.phase)throw new Error('Invalid route');
+   }
+   try {
+    if(save.campaignResume){replayCampaign(save.campaignResume);campaignResume=save.campaignResume;}
+   }catch(_){campaignResume=null;}
+   kind=a.kind;index=a.index;run=restored;return true;
+  } catch(error) {
+   // A damaged save never supplies positions, charges, scores or executable HTML.
+   if(error.name==='SecurityError') {storageOK=false;storageMessage='Saving is unavailable. You can keep playing in this session.';}
+   else storageMessage='The previous save could not be restored. Starting a fresh run.';
+   return false;
+  }
+ }
+ function replayCampaign(record){
+  if(!record||!Number.isInteger(record.index)||record.index<0||record.index>=E.campaign.length||!Array.isArray(record.actions)||record.actions.length>10000)throw new Error('Invalid campaign resume');
+  const restored=E.createRun(mazeFor(E.campaign[record.index]));
+  for(const step of record.actions){
+   if(!step||!Number.isInteger(step.axis)||![1,-1].includes(step.sign)||typeof step.phase!=='boolean')throw new Error('Invalid campaign action');
+   const result=E.move(restored,step.axis,step.sign,step.phase);
+   if(!result.ok||result.phased!==step.phase)throw new Error('Invalid campaign route');
+  }
+  return restored;
+ }
+ function load(newKind,newIndex,save=true) {
+  const list=newKind==='tutorial'?E.tutorials:E.campaign;
+  if(!Number.isInteger(newIndex)||newIndex<0||newIndex>=list.length)return false;
+  if(newKind==='tutorial'){
+   if(kind==='campaign'&&run)campaignResume={index,actions:run.history.map(a=>({...a}))};
+   settings.introDismissed=true;
+  }
+  closeDialogs();kind=newKind;index=newIndex;run=E.createRun(mazeFor(list[index]));
+  armed=false;selectedSlice=run.position.slice(2);hoverPreview=null;
+  lastFeedback=kind==='tutorial'?list[index].description:'Find the gold star. Open doors connect the slices.';
+  render();if(save)persist();return true;
+ }
+ function returnToCampaign(){
+  const record=campaignResume;
+  load('campaign',record?record.index:0,false);
+  if(record){try{run=replayCampaign(record)}catch(_){/* The fresh run is safe. */}}
+  settings.introDismissed=true;armed=false;selectedSlice=run.position.slice(2);hoverPreview=null;
+  lastFeedback='Back to the campaign. Your run is ready; Learn is available whenever you want it.';
+  render();persist();if(run.won)showWin();
+ }
+ function restart() {
+  closeDialogs();E.restart(run);armed=false;selectedSlice=run.position.slice(2);hoverPreview=null;
+  lastFeedback='Same maze, fresh start. Moves and phase charges reset.';render();persist();
+ }
+ function undo() {
+  if(!run.history.length)return false;
+  closeDialogs();E.undo(run);armed=false;selectedSlice=run.position.slice(2);hoverPreview=null;
+  lastFeedback='Move undone. Any phase charge spent on that move is restored.';render();persist();return true;
+ }
+ function attempt(axis,sign,phase=false) {
+  if($('help-dialog').open||$('win-dialog').open)return {ok:false,reason:'dialog'};
+  const result=E.move(run,axis,sign,phase||armed);
+  if(!result.ok){
+   const reasons={finished:'This maze is solved. Press Enter to continue, or Undo to explore.',boundary:'That axis ends here. Phase cannot cross the boundary.',wall:run.charges?'Closed connection. Arm phase to cross it, or find an open door.':'Closed connection. Find an open doorway or another route.', 'no-charge':'No phase charges left. Undo a move or follow open connections.'};
+   lastFeedback=reasons[result.reason]||'That move is unavailable.';
+   renderFeedback();return result;
+  }
+  armed=false;hoverPreview=null;selectedSlice=run.position.slice(2);
+  lastFeedback=result.phased?'Phased through a closed connection. One charge spent.':result.wrapped?`W wrapped to row ${run.position[3]}. X and Y stayed the same.`:axis>=2?`Stepped ${AXES[axis]}${sign>0?'+':'−'} to ${addr(run.position)}.`:'Moved inside the connected region.';
+  if(run.won){
+   const id=run.maze.config.id;best[id]=Math.min(best[id]??Infinity,run.moves);
+   lastFeedback='Goal reached. This run is saved to your personal bests.';
+  }
+  render();persist();if(run.won)showWin();return result;
+ }
+ function togglePhase() {
+  if(run.won||!run.charges||$('help-dialog').open||$('win-dialog').open)return;
+  armed=!armed;
+  lastFeedback=armed?'Phase armed for your next successful move. Blocked attempts keep it ready.':'Phase disarmed.';
+  render();
+ }
+ function next() {
+  if(!run.won)return;
+  if(kind==='tutorial')index===E.tutorials.length-1?returnToCampaign():load('tutorial',index+1);
+  else load('campaign',(index+1)%E.campaign.length);
+ }
+ function preview(axis,sign) {
+  if(run.won||axis<2)return;
+  const n=E.neighbor(run.maze,run.position,axis,sign);
+  if(!n){hoverPreview={slice:run.position.slice(2),text:`${AXES[axis]}${sign>0?'+':'−'} is outside this maze. Phase cannot cross the boundary.`};}
+  else {
+   const access=n.open?'Open doorway':run.charges?'Closed: one phase charge needed':'Closed: no phase charges left';
+   hoverPreview={slice:n.position.slice(2),text:`${AXES[axis]}${sign>0?'+':'−'} → Z ${n.position[2]}, W ${n.position[3]}${n.wrapped?' (wrap)':''}. ${access}. X/Y stay ${run.position[0]}/${run.position[1]}.`};
+  }
+  renderBoard();
+ }
+ function clearPreview(){if(hoverPreview){hoverPreview=null;renderBoard();}}
+ function inspect(z,w){selectedSlice=[z,w];hoverPreview=null;settings.view='focus';render();persist();}
+ function setView(view){if(!['focus','atlas'].includes(view))return;settings.view=view;hoverPreview=null;render();persist();}
+ function announceMoves(){
+  return [0,1,2,3].flatMap(a=>[-1,1].map(s=>{
+   const n=E.neighbor(run.maze,run.position,a,s);
+   return `${AXES[a]}${s>0?' plus':' minus'}: ${!n?'boundary':n.open?'open':run.charges?'closed, can phase':'closed'}`;
+  })).join('. ');
+ }
+ function renderFeedback(){
+  $('feedback').textContent=lastFeedback;
+  $('accessible-state').textContent=`${addr(run.position)}. ${run.moves} moves. ${run.charges} phase charges. ${armed?'Phase armed. ':''}${run.won?'Goal reached.':announceMoves()}`;
+ }
+ function starPoints(x,y,r){return Array.from({length:10},(_,i)=>{const a=-Math.PI/2+i*Math.PI/5,rr=i%2?r*.44:r;return `${x+Math.cos(a)*rr},${y+Math.sin(a)*rr}`}).join(' ');}
+ function drawSlice(z,w,small=false){
+  const maze=run.maze,[X,Y]=maze.dimensions,c=64,pad=24,pw=X*c,ph=Y*c,uid=`s${z}-${w}-${small?'a':'f'}`;
+  const active=run.position[2]===z&&run.position[3]===w;
+  const projection=[run.position[0],run.position[1],z,w];
+  const region=settings.region?E.region(maze,projection):new Set();
+  let svg=`<svg class="maze-svg" viewBox="0 0 ${pw+pad*2} ${ph+pad*2}" role="img" aria-label="Slice Z ${z}, W ${w}. ${active?'Contains your position.':'Ring marks your projected X and Y.'} ${maze.goal[2]===z&&maze.goal[3]===w?'Contains the goal.':''}"><defs><radialGradient id="orb-${uid}"><stop stop-color="#ffffff"/><stop offset=".5" stop-color="#b6ffff"/><stop offset="1" stop-color="#64dce5"/></radialGradient></defs>`;
+  svg+=`<rect x="${pad}" y="${pad}" width="${pw}" height="${ph}" rx="3" fill="#0c1826"/>`;
+  for(let y=0;y<Y;y++)for(let x=0;x<X;x++){
+   const px=pad+x*c,py=pad+y*c,p=[x,y,z,w];
+   if(region.has(E.key(p)))svg+=`<rect class="region-fill" x="${px+1}" y="${py+1}" width="${c-2}" height="${c-2}" fill="${active?'#1a3b45':'#253143'}"/>`;
+   svg+=`<rect x="${px}" y="${py}" width="${c}" height="${c}" fill="none" stroke="#294053" stroke-width=".65" stroke-dasharray="2 4"/>`;
+  }
+  // A quiet breadcrumb trail shows only actual in-slice steps; it never joins
+  // two panels across intervening walls or suggests a diagonal move.
+  for(let i=1;i<run.trail.length;i++){
+   const a=run.trail[i-1],b=run.trail[i];
+   if(a[2]===z&&a[3]===w&&b[2]===z&&b[3]===w)svg+=`<path d="M${pad+(a[0]+.5)*c} ${pad+(a[1]+.5)*c}L${pad+(b[0]+.5)*c} ${pad+(b[1]+.5)*c}" stroke="${run.history[i-1].phase?'#c899e5':'#639894'}" stroke-width="2" stroke-dasharray="3 5" opacity=".65"/>`;
+  }
+  let walls='';
+  for(let y=0;y<Y;y++)for(let x=0;x<X;x++){
+   const p=[x,y,z,w],px=pad+x*c,py=pad+y*c;
+   if(x<X-1&&!maze.open.has(E.key(p)+'|0'))walls+=`M${px+c} ${py}v${c}`;
+   if(y<Y-1&&!maze.open.has(E.key(p)+'|1'))walls+=`M${px} ${py+c}h${c}`;
+  }
+  svg+=`<path class="maze-wall" d="${walls}" fill="none" stroke="${active?'#78bdc4':'#7493b1'}" stroke-width="2.5" stroke-linecap="round"/><rect class="maze-wall" x="${pad}" y="${pad}" width="${pw}" height="${ph}" rx="2" fill="none" stroke="${active?'#8ee9e4':'#637e99'}" stroke-width="2.5"/>`;
+  for(let y=0;y<Y;y++)for(let x=0;x<X;x++)for(const a of [2,3])for(const s of [-1,1]){
+   const n=E.neighbor(maze,[x,y,z,w],a,s);if(!n||!n.open)continue;
+   const cx=pad+(x+.5)*c,cy=pad+(y+.5)*c;
+   if(a===2){const xx=cx+s*c*.34;svg+=`<path d="M${xx-s*3.5} ${cy-5}l${s*5} 5 ${-s*5} 5" fill="none" stroke="#83f4f2" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>`;}
+   else {const yy=cy+s*c*.34;svg+=`<path d="M${cx} ${yy-4.5}l4.5 4.5 -4.5 4.5 -4.5 -4.5Z" fill="#e6a5ff"/>`;}
+  }
+  if(maze.start[2]===z&&maze.start[3]===w)svg+=`<text x="${pad+(maze.start[0]+.18)*c}" y="${pad+(maze.start[1]+.25)*c}" fill="#b9d6cf" font-size="9" font-family="monospace">S</text>`;
+  if(maze.goal[2]===z&&maze.goal[3]===w)svg+=`<polygon points="${starPoints(pad+(maze.goal[0]+.5)*c,pad+(maze.goal[1]+.5)*c,14)}" fill="#ffdb89" stroke="#fff0bd" stroke-width="1"/>`;
+  const xx=pad+(run.position[0]+.5)*c,yy=pad+(run.position[1]+.5)*c;
+  if(active)svg+=`<circle class="player-pulse" cx="${xx}" cy="${yy}" r="17" fill="none" stroke="#8cf7ed" stroke-width="1" opacity=".7"/><circle cx="${xx}" cy="${yy}" r="10" fill="url(#orb-${uid})" stroke="#e7ffff" stroke-width="1.5"/>`;
+  else svg+=`<circle cx="${xx}" cy="${yy}" r="11" fill="none" stroke="#b5dde0" stroke-dasharray="3 3" stroke-width="1.6"/>`;
+  for(let x=0;x<X;x++)svg+=`<text x="${pad+(x+.5)*c}" y="14" text-anchor="middle" fill="#91aabc" font-size="10" font-family="monospace">${x}</text>`;
+  for(let y=0;y<Y;y++)svg+=`<text x="11" y="${pad+(y+.5)*c+3}" text-anchor="middle" fill="#91aabc" font-size="10" font-family="monospace">${y}</text>`;
+  return svg+'</svg>';
+ }
+ function renderBoard(){
+  const [z,w]=hoverPreview?hoverPreview.slice:selectedSlice;
+  const current=z===run.position[2]&&w===run.position[3],atlas=settings.view==='atlas';
+  $('focus-view').setAttribute('aria-pressed',String(!atlas));$('atlas-view').setAttribute('aria-pressed',String(atlas));
+  $('focus-stage').hidden=atlas;$('atlas-grid').hidden=!atlas;
+  $('board-title').textContent=atlas?'Every slice, one connected maze':current?'Your current slice':'Inspecting another slice';
+  $('slice-caption').textContent=atlas?`${run.maze.dimensions[2]} Z columns · ${run.maze.dimensions[3]} W rows · scroll to explore`:`Z ${z} · W ${w} ${current?'· you are here':'· projected landing region'}`;
+  const mobile=matchMedia('(max-width:760px)').matches;
+  const base=Math.min(mobile?340:440,Math.max(256,run.maze.dimensions[0]*76));
+  $('focus-stage').style.setProperty('--board-width',`${base*settings.zoom}px`);
+  if(atlas){
+   let content='';const d=run.maze.dimensions;
+   for(let ww=0;ww<d[3];ww++)for(let zz=0;zz<d[2];zz++)content+=`<article class="atlas-card ${zz===run.position[2]&&ww===run.position[3]?'active':''}"><header><span>Z ${zz} · W ${ww}</span><span>${zz===run.position[2]&&ww===run.position[3]?'YOU':zz===run.maze.goal[2]&&ww===run.maze.goal[3]?'★ GOAL':''}</span></header>${drawSlice(zz,ww,true)}</article>`;
+   $('atlas-grid').style.setProperty('--z',d[2]);$('atlas-grid').innerHTML=content;
+  }else $('focus-stage').innerHTML=drawSlice(z,w);
+  $('coordinates').textContent=addr(run.position);
+  $('preview-text').textContent=hoverPreview?hoverPreview.text:current?'Tinted cells connect without changing slices. Walls separate regions.':'The ring projects your X/Y here. Inspecting does not move you or guarantee an open door.';
+  $('return-player').hidden=current&&!hoverPreview;
+  $('zoom-in').disabled=atlas||settings.zoom>=2;$('zoom-out').disabled=atlas||settings.zoom<=.75;
+  document.querySelectorAll('.slice-button').forEach(b=>{
+   const selected=Number(b.dataset.z)===z&&Number(b.dataset.w)===w;
+   b.classList.toggle('selected',selected);b.setAttribute('aria-pressed',String(selected));
+  });
+ }
+ function render(){
+  const maze=run.maze,c=maze.config;
+  $('intro-banner').hidden=kind!=='campaign'||settings.introDismissed;
+  $('tutorial-actions').hidden=kind!=='tutorial';
+  document.body.classList.toggle('reduced-motion',settings.motion);document.body.classList.toggle('high-contrast',settings.contrast);
+  $('mode-label').textContent=kind==='tutorial'?`Learn to play / lesson ${index+1} of 5`:`Campaign / level ${index+1} of 6`;
+  $('level-number').textContent=kind==='tutorial'?`L${index+1}`:String(index+1).padStart(2,'0');
+  $('level-name').textContent=c.name;$('level-description').textContent=c.description;
+  $('level-select').value=c.id;$('moves').textContent=run.moves;$('optimum').textContent=maze.optimum;$('normal-par').textContent=maze.normalPar;$('charges').textContent=run.charges;
+  $('normal-par').parentElement.title='Shortest route without using phase';$('optimum').parentElement.title='Shortest route with this level’s starting phase allowance';
+  $('region-toggle').checked=settings.region;$('motion-toggle').checked=settings.motion;$('contrast-toggle').checked=settings.contrast;
+  $('phase-button').disabled=!run.charges||run.won;$('phase-button').setAttribute('aria-pressed',String(armed));
+  $('phase-button').innerHTML=armed?'◆ Phase armed · tap to cancel':run.charges?'◇ Arm phase <span class="mono">[Space]</span>':kind==='campaign'&&index<3?'Phase unlocks in Level 4':'No phase charges';
+  $('undo-button').disabled=!run.history.length;
+  $('goal-address').textContent=addr(maze.goal);
+  $('best-score').textContent=best[c.id]!==undefined?` · Best: ${best[c.id]} moves`:'';
+  let nav='';
+  for(let w=0;w<maze.dimensions[3];w++)for(let z=0;z<maze.dimensions[2];z++){
+   const active=z===run.position[2]&&w===run.position[3],goal=z===maze.goal[2]&&w===maze.goal[3];
+   nav+=`<button class="slice-button ${active?'current':''} ${goal?'goal-slice':''}" data-z="${z}" data-w="${w}" aria-label="Inspect slice Z ${z}, W ${w}${active?', your current slice':''}${goal?', contains goal':''}" aria-pressed="false"><span class="mono">Z ${z} · W ${w}</span><span class="slice-status">${active?'● YOU':goal?'★ GOAL':'Inspect'}</span></button>`;
+  }
+  $('slice-map').style.setProperty('--z',maze.dimensions[2]);$('slice-map').innerHTML=nav;
+  document.querySelectorAll('button[data-axis]').forEach(b=>{
+   const axis=Number(b.dataset.axis),sign=Number(b.dataset.sign),n=E.neighbor(maze,run.position,axis,sign);
+   b.disabled=run.won||maze.dimensions[axis]===1;
+   b.title=`${AXES[axis]}${sign>0?'+':'−'}: ${!n?'boundary':n.open?'open':run.charges?'closed; phase available':'closed'}`;
+   b.dataset.status=n?.open?'open':'closed';
+  });
+  renderBoard();renderFeedback();
+  $('save-note').textContent=!storageOK?storageMessage:storageMessage||'Progress saves on this device.';
+ }
+ function showWin(){
+  const optimum=run.moves===run.maze.optimum,beat=run.moves<run.maze.normalPar;
+  $('win-kicker').textContent=optimum?'Optimal':beat?'Par beaten':'Solved';
+  $('win-title').textContent=kind==='tutorial'?'Lesson complete.':index===5?'Campaign complete.':'Dimension solved.';
+  $('win-message').textContent=optimum?'You found a shortest possible route with this level’s phase allowance.':beat?'You beat the normal route. A shorter phase-enabled solution is still possible.':run.moves===run.maze.normalPar?'Normal par matched. Try another route to reach the optimum.':'The connection is complete. Try again to reduce your move count.';
+  $('win-moves').textContent=run.moves;$('win-optimum').textContent=run.maze.optimum;
+  $('next-button').textContent=kind==='tutorial'?(index===4?'Continue campaign →':'Next lesson →'):(index===5?'Return to Level 1 →':'Next level →');
+  $('win-dialog').showModal();$('next-button').focus();
+ }
+ function openHelp(){if($('win-dialog').open)$('win-dialog').close();hoverPreview=null;$('help-dialog').showModal();}
+ // Native click activation supports touch, mouse, Enter, Space and assistive technology.
+ document.querySelectorAll('button[data-axis]').forEach(b=>{
+  const a=Number(b.dataset.axis),s=Number(b.dataset.sign);
+  b.addEventListener('click',()=>attempt(a,s));
+  b.addEventListener('pointerenter',e=>{if(e.pointerType==='mouse')preview(a,s)});
+  b.addEventListener('pointerleave',clearPreview);b.addEventListener('focus',()=>preview(a,s));b.addEventListener('blur',clearPreview);
+ });
+ $('phase-button').addEventListener('click',togglePhase);$('restart-button').addEventListener('click',restart);$('undo-button').addEventListener('click',undo);
+ $('next-button').addEventListener('click',next);$('replay-button').addEventListener('click',restart);$('win-undo').addEventListener('click',undo);
+ $('focus-view').addEventListener('click',()=>setView('focus'));$('atlas-view').addEventListener('click',()=>setView('atlas'));
+ $('return-player').addEventListener('click',()=>{selectedSlice=run.position.slice(2);hoverPreview=null;renderBoard()});
+ $('slice-map').addEventListener('click',e=>{const b=e.target.closest('button[data-z]');if(b)inspect(Number(b.dataset.z),Number(b.dataset.w))});
+ $('level-select').addEventListener('change',e=>{const [type,num]=e.target.value.split('-');load(type,Number(num)-1)});
+ $('learn-button').addEventListener('click',()=>load('tutorial',0));$('help-learn').addEventListener('click',()=>load('tutorial',0));$('help-button').addEventListener('click',openHelp);
+ $('try-tutorial').addEventListener('click',()=>load('tutorial',0));
+ $('skip-intro').addEventListener('click',()=>{settings.introDismissed=true;render();persist()});
+ $('skip-tutorial').addEventListener('click',returnToCampaign);
+ document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',()=>$(b.dataset.close).close()));
+ $('region-toggle').addEventListener('change',e=>{settings.region=e.target.checked;renderBoard();persist()});
+ $('motion-toggle').addEventListener('change',e=>{settings.motion=e.target.checked;render();persist()});
+ $('contrast-toggle').addEventListener('change',e=>{settings.contrast=e.target.checked;render();persist()});
+ function zoom(direction){const steps=[.75,1,1.25,1.5,2];settings.zoom=steps[Math.max(0,Math.min(steps.length-1,steps.indexOf(settings.zoom)+direction))];renderBoard();persist();}
+ $('zoom-in').addEventListener('click',()=>zoom(1));$('zoom-out').addEventListener('click',()=>zoom(-1));
+ addEventListener('keydown',e=>{
+  if(e.metaKey||e.ctrlKey||e.altKey||e.isComposing)return;
+  const k=e.key.toLowerCase(),target=e.target;
+  if($('help-dialog').open)return;
+  if(target.closest('select,input,textarea,[contenteditable="true"]'))return;
+  if(e.repeat){if(KEYMAP[k]||k===' ')e.preventDefault();return;}
+  if($('win-dialog').open){if(k==='u'){e.preventDefault();undo()}else if(k==='r'){e.preventDefault();restart()}return;}
+  if((k===' '||k==='enter')&&target.closest('button'))return;
+  if(KEYMAP[k]){e.preventDefault();attempt(...KEYMAP[k],e.shiftKey)}
+  else if(k===' '){e.preventDefault();togglePhase()}
+  else if(k==='u'){e.preventDefault();undo()}
+  else if(k==='r'){e.preventDefault();restart()}
+  else if(k==='enter'&&run.won){e.preventDefault();next()}
+  else if(k==='h'){e.preventDefault();openHelp()}
+ });
+ let resizePending=false;
+ addEventListener('resize',()=>{if(!resizePending){resizePending=true;requestAnimationFrame(()=>{resizePending=false;renderBoard()})}});
+ $('level-select').innerHTML='<optgroup label="Campaign">'+E.campaign.map((c,i)=>`<option value="${c.id}">${i+1}. ${c.name}</option>`).join('')+'</optgroup><optgroup label="Learn to play">'+E.tutorials.map((c,i)=>`<option value="${c.id}">Lesson ${i+1}. ${c.name}</option>`).join('')+'</optgroup>';
+ const resumed=restore();
+ if(!resumed)run=E.createRun(mazeFor(E.campaign[0]));
+ selectedSlice=run.position.slice(2);armed=false;
+ lastFeedback=resumed?'Your saved run is ready. Continue where you left off.':storageMessage||'New to four dimensions? Try Learn to play for five short lessons.';
+ render();persist();if(run.won)showWin();
+ globalThis.TesseractApp={
+  snapshot:()=>({kind,index,position:run.position.slice(),charges:run.charges,moves:run.moves,won:run.won,armed,history:run.history.map(x=>({...x})),normalPar:run.maze.normalPar,optimum:run.maze.optimum,goal:run.maze.goal.slice(),dimensions:run.maze.dimensions.slice(),selectedSlice:selectedSlice.slice(),view:settings.view,best:{...best},storageOK}),
+  loadCampaign:i=>load('campaign',i),loadTutorial:i=>load('tutorial',i),restart,undo,attempt,preview,setView
+ };
+})();
+
+</script>
+</body></html>
